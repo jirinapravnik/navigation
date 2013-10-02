@@ -1,5 +1,5 @@
 {
-    "name": "jirincz/navigtion",
+    "name": "jirinapravnik/navigation",
     "description": "Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace",
     "keywords": ["nette", "breadcrumbs"],
     "type": "library",
