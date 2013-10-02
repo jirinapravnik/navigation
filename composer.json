@@ -1,5 +1,5 @@
 {
-    "name": "enbros/navigation",
+    "name": "jirinapravnik/navigation",
     "description": "Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace",
     "keywords": ["nette", "menu", "breadcrumbs"],
     "type": "library",
