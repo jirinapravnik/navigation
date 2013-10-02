@@ -1,9 +1,9 @@
 {
-    "name": "jirinapravnik/navigation",
+    "name": "enbros/navigation",
     "description": "Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace",
-    "keywords": ["nette", "breadcrumbs"],
+    "keywords": ["nette", "menu", "breadcrumbs"],
     "type": "library",
-    "homepage": "https://github.com/jirincz/navigation",
+    "homepage": "https://github.com/jirinapravnik/navigation",
     "license": "MIT",
     "authors": [
         {
@@ -20,7 +20,7 @@
     ],
     "support": {
         "email": "jiri.napravnik@gmail.com",
-        "forum": "https://github.com/jirincz/navigation/issues"
+        "forum": "https://github.com/jirinapravnik/navigation/issues"
     },
     "require": {
         "php": ">=5.3.0",
