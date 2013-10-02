@@ -4,6 +4,7 @@
  * Navigation node
  *
  * @author Jan Marek
+ * @author Jiří Nápravník (jiri.napravnik@gmail.com)
  * @license MIT
  */
 

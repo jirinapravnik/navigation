@@ -1,0 +1,34 @@
+{
+    "name": "jirincz/navigtion",
+    "description": "Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace",
+    "keywords": ["nette", "breadcrumbs"],
+    "type": "library",
+    "homepage": "https://github.com/jirincz/navigation",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jan Marek",
+            "email": "mail@janmarek.net",
+            "homepage": "http://www.janmarek.net/",
+            "role": "Author"
+        },
+        {
+            "name": "Jiří Nápravník",
+            "email": "jiri.napravnik@gmail.com",
+            "homepage": "http://jirinapravnik.cz",
+        }
+    ],
+    "support": {
+        "email": "jiri.napravnik@gmail.com",
+        "forum": "https://github.com/jirincz/navigation/issues"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "nette/nette": "@dev",
+    },
+    "autoload": {
+        "psr-0": {
+            "Enbros\\Navigation\\": "src/"
+        }
+    }
+}

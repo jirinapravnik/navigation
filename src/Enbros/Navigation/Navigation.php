@@ -4,10 +4,11 @@
  * Navigation
  *
  * @author Jan Marek
+ * @author Jiří Nápravník (jiri.napravnik@gmail.com)
  * @license MIT
  */
 
-namespace Navigation;
+namespace Enbros\Navigation;
 
 use Nette\Application\UI\Control;
 
