@@ -1,19 +1,11 @@
 <ul class="control menu">
-	<li n:if="$useHomepage">
-		{if $homepage->isCurrent}
-		<span class="active"><strong>{$homepage->label}</strong></span>
-		{else}
-		<a href="{$homepage->url}">{$homepage->label}</a>
-		{/if}
+	<li n:if="$useHomepage" n:class="$homepage->isCurrent ? current">
+		<a href="{$homepage->url}" n:attr="title => $homepage->title">{$homepage->label}</a>
 	</li>
 
 	{block #menu}
-	<li n:foreach="$children as $item">
-		{if $item->isCurrent}
-		<span class="active"><strong>{$item->label}</strong></span>
-		{else}
-		<a href="{$item->url}">{$item->label}</a>
-		{/if}
+	<li n:foreach="$children as $item" n:class="$iterator->last ? last, $item->isCurrent ? current">
+		<a href="{$item->url}" n:attr="title => $item->title">{$item->label}</a>
 		
 		{if $renderChildren && count($item->getComponents()) > 0}
 		<ul>

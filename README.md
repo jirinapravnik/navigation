@@ -1,16 +1,27 @@
-﻿Navigation
+#Navigation
 ==========
 
 Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace
 
 Autor: Jan Marek
+Autor: Jiří Nápravník
 Licence: MIT
 
-Použití
--------
+##Instalace
+nejlépe s využitím Composeru
 
-Továrnička v presenteru:
+```json
+{
+	"require": {
+        "jirinapravnik/navigation": "@dev"
+    }
+}
+```
 
+##Použití
+###Továrnička v presenteru:
+
+```php
 	protected function createComponentNavigation($name) {
 		$nav = new Navigation($this, $name);
 		$nav->setupHomepage("Úvod", $this->link("Homepage:"));
@@ -19,13 +30,16 @@ Továrnička v presenteru:
 		$nav->setCurrentNode($article);
 		// or $article->setCurrent(TRUE);
 	}
+```
 
 
-Menu v šabloně:
+###Menu v šabloně:
+```
+{control navigation}
+```
 
-	{widget navigation}
 
-
-Drobečková navigace v šabloně:
-
-	{widget navigation:breadcrumbs}
+###Drobečková navigace v šabloně:
+```
+{control navigation:breadcrumbs}
+```

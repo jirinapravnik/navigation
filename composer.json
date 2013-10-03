@@ -1,7 +1,7 @@
 {
     "name": "jirinapravnik/navigation",
     "description": "Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace",
-    "keywords": ["nette", "menu", "breadcrumbs"],
+    "keywords": ["nette", "navigation", "menu", "breadcrumbs"],
     "type": "library",
     "homepage": "https://github.com/jirinapravnik/navigation",
     "license": "MIT",

@@ -15,19 +15,29 @@ use Nette\Application\UI\Control;
 class Navigation extends Control
 {
 
-	/** @var NavigationNode */
+	/**
+	 * @var NavigationNode 
+	 */
 	private $homepage;
 
-	/** @var NavigationNode */
+	/**
+	 * @var NavigationNode 
+	 */
 	private $current;
 
-	/** @var bool */
-	private $useHomepage = false;
+	/**
+	 * @var bool 
+	 */
+	private $useHomepage = FALSE;
 
-	/** @var string */
+	/**
+	 * @var string 
+	 */
 	private $menuTemplate;
 
-	/** @var string */
+	/**
+	 * @var string 
+	 */
 	private $breadcrumbsTemplate;
 
 	/**
@@ -37,9 +47,9 @@ class Navigation extends Control
 	public function setCurrentNode(NavigationNode $node)
 	{
 		if (isset($this->current)) {
-			$this->current->isCurrent = false;
+			$this->current->isCurrent = FALSE;
 		}
-		$node->isCurrent = true;
+		$node->isCurrent = TRUE;
 		$this->current = $node;
 	}
 
@@ -47,26 +57,44 @@ class Navigation extends Control
 	 * Add navigation node as a child
 	 * @param string $label
 	 * @param string $url
+	 * @param string $title
 	 * @return NavigationNode
 	 */
-	public function add($label, $url)
+	public function addNode($label, $url, $title = NULL)
 	{
-		return $this->getComponent('homepage')->add($label, $url);
+		return $this->getComponent('homepage')->addNode($label, $this->getCorrectUrl($url), $title);
 	}
 
 	/**
 	 * Setup homepage
 	 * @param string $label
 	 * @param string $url
+	 * @param string $title
 	 * @return NavigationNode
 	 */
-	public function setupHomepage($label, $url)
+	public function setupHomepage($label, $url, $title = NULL)
 	{
 		$homepage = $this->getComponent('homepage');
-		$homepage->label = $label;
-		$homepage->url = $url;
-		$this->useHomepage = true;
+		$homepage->setLabel($label);
+		$homepage->setUrl($this->getCorrectUrl($url));
+		$homepage->setTitle($title);
+		$this->useHomepage = TRUE;
 		return $homepage;
+	}
+
+	protected function getCorrectUrl($url)
+	{
+		try {
+			$link = $this->presenter->link($url);
+		} catch (\Nette\Application\UI\InvalidLinkException $ex) {
+			$link = FALSE;
+		}
+
+		if ($link === FALSE || \Nette\Utils\Strings::startsWith($link, "error") === TRUE) {
+			return $url;
+		} else {
+			return $link;
+		}
 	}
 
 	/**
@@ -87,7 +115,7 @@ class Navigation extends Control
 	public function renderMenu($renderChildren = TRUE, $base = NULL, $renderHomepage = TRUE)
 	{
 		$template = $this->createTemplate()
-			->setFile($this->menuTemplate ?: __DIR__ . '/menu.phtml');
+			->setFile($this->menuTemplate ? : __DIR__ . '/templates/menu.phtml');
 		$template->homepage = $base ? $base : $this->getComponent('homepage');
 		$template->useHomepage = $this->useHomepage && $renderHomepage;
 		$template->renderChildren = $renderChildren;
@@ -120,23 +148,36 @@ class Navigation extends Control
 			return;
 		}
 
-		$items = array();
 		$node = $this->current;
-
+		$breadcrumbs = null;
+		
 		while ($node instanceof NavigationNode) {
 			$parent = $node->getParent();
-			if (!$this->useHomepage && !($parent instanceof NavigationNode)) {
+			if (!$this->useHomepage && $parent === $this->getComponent('homepage')) {
+				$breadcrumbs = $node;
 				break;
 			}
-
-			array_unshift($items, $node);
+			
+			foreach($parent->getComponents() as $component){
+				if($component != $node){
+					$parent->removeComponent($component);
+				}
+			}
+			
 			$node = $parent;
+			
+			if($node === $this->getComponent('homepage')){
+				$breadcrumbs = $node;
+			}
 		}
-
+		
 		$template = $this->createTemplate()
-			->setFile($this->breadcrumbsTemplate ?: __DIR__ . '/breadcrumbs.phtml');
-
-		$template->items = $items;
+			->setFile($this->breadcrumbsTemplate ? : __DIR__ . '/templates/breadcrumbs.phtml');
+//		\Nette\Diagnostics\Debugger::dump($breadcrumbs);
+		
+		
+		$template->useHomepage = $this->useHomepage;
+		$template->breadcrumbs = array($breadcrumbs);
 		$template->render();
 	}
 
@@ -157,11 +198,17 @@ class Navigation extends Control
 	}
 
 	/**
-	 * @return \Navigation\NavigationNode
+	 * @return NavigationNode
 	 */
 	public function getCurrentNode()
 	{
 		return $this->current;
+	}
+
+	public function setUseHomepage($useHomepage)
+	{
+		$this->useHomepage = $useHomepage;
+		return $this;
 	}
 
 }
