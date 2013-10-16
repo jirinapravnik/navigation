@@ -4,7 +4,7 @@
 	</li>
 
 	{block #menu}
-	<li n:foreach="$children as $item" n:class="$iterator->last ? last, $item->isCurrent ? current">
+	<li n:foreach="$children as $item" n:class="$iterator->last ? last, $item->isCurrent ? current" n:if="$item->visibleInMenu">
 		<a href="{$item->url}" n:attr="title => $item->title">{$item->label}</a>
 		
 		{if $renderChildren && count($item->getComponents()) > 0}

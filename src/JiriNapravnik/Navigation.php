@@ -1,5 +1,12 @@
 <?php
 
+namespace JiriNapravnik;
+
+use JiriNapravnik\Navigation\Node;
+use Nette\Application\UI\Control;
+use Nette\Application\UI\InvalidLinkException;
+use Nette\Utils\Strings;
+
 /**
  * Navigation
  *
@@ -7,21 +14,16 @@
  * @author Jiří Nápravník (jiri.napravnik@gmail.com)
  * @license MIT
  */
-
-namespace Enbros\Navigation;
-
-use Nette\Application\UI\Control;
-
 class Navigation extends Control
 {
 
 	/**
-	 * @var NavigationNode 
+	 * @var Node 
 	 */
 	private $homepage;
 
 	/**
-	 * @var NavigationNode 
+	 * @var Node 
 	 */
 	private $current;
 
@@ -42,9 +44,9 @@ class Navigation extends Control
 
 	/**
 	 * Set node as current
-	 * @param NavigationNode $node
+	 * @param Node $node
 	 */
-	public function setCurrentNode(NavigationNode $node)
+	public function setCurrentNode(Node $node)
 	{
 		if (isset($this->current)) {
 			$this->current->isCurrent = FALSE;
@@ -53,12 +55,28 @@ class Navigation extends Control
 		$this->current = $node;
 	}
 
+	public function setCurrentNodeByUrl($url, $node = NULL)
+	{
+		if (is_null($node)) {
+			$node = $this->getComponent('homepage');
+		}
+
+		if ($node->getUrl() === $url) {
+			$this->setCurrentNode($node);
+			return;
+		}
+
+		foreach ($node->getComponents() as $component) {
+			$this->setCurrentNodeByUrl($url, $component);
+		}
+	}
+
 	/**
 	 * Add navigation node as a child
 	 * @param string $label
 	 * @param string $url
 	 * @param string $title
-	 * @return NavigationNode
+	 * @return Node
 	 */
 	public function addNode($label, $url, $title = NULL)
 	{
@@ -70,7 +88,7 @@ class Navigation extends Control
 	 * @param string $label
 	 * @param string $url
 	 * @param string $title
-	 * @return NavigationNode
+	 * @return Node
 	 */
 	public function setupHomepage($label, $url, $title = NULL)
 	{
@@ -86,11 +104,11 @@ class Navigation extends Control
 	{
 		try {
 			$link = $this->presenter->link($url);
-		} catch (\Nette\Application\UI\InvalidLinkException $ex) {
+		} catch (InvalidLinkException $ex) {
 			$link = FALSE;
 		}
 
-		if ($link === FALSE || \Nette\Utils\Strings::startsWith($link, "error") === TRUE) {
+		if ($link === FALSE || Strings::startsWith($link, "error") === TRUE) {
 			return $url;
 		} else {
 			return $link;
@@ -103,13 +121,13 @@ class Navigation extends Control
 	 */
 	protected function createComponentHomepage($name)
 	{
-		new NavigationNode($this, $name);
+		new Node($this, $name);
 	}
 
 	/**
 	 * Render menu
 	 * @param bool $renderChildren
-	 * @param NavigationNode $base
+	 * @param Node $base
 	 * @param bool $renderHomepage
 	 */
 	public function renderMenu($renderChildren = TRUE, $base = NULL, $renderHomepage = TRUE)
@@ -150,32 +168,30 @@ class Navigation extends Control
 
 		$node = $this->current;
 		$breadcrumbs = null;
-		
-		while ($node instanceof NavigationNode) {
+
+		while ($node instanceof Node) {
 			$parent = $node->getParent();
 			if (!$this->useHomepage && $parent === $this->getComponent('homepage')) {
 				$breadcrumbs = $node;
 				break;
 			}
-			
-			foreach($parent->getComponents() as $component){
-				if($component != $node){
+
+			foreach ($parent->getComponents() as $component) {
+				if ($component != $node) {
 					$parent->removeComponent($component);
 				}
 			}
-			
+
 			$node = $parent;
-			
-			if($node === $this->getComponent('homepage')){
+
+			if ($node === $this->getComponent('homepage')) {
 				$breadcrumbs = $node;
 			}
 		}
-		
+
 		$template = $this->createTemplate()
 			->setFile($this->breadcrumbsTemplate ? : __DIR__ . '/templates/breadcrumbs.phtml');
-//		\Nette\Diagnostics\Debugger::dump($breadcrumbs);
-		
-		
+
 		$template->useHomepage = $this->useHomepage;
 		$template->breadcrumbs = array($breadcrumbs);
 		$template->render();
@@ -198,7 +214,7 @@ class Navigation extends Control
 	}
 
 	/**
-	 * @return NavigationNode
+	 * @return Node
 	 */
 	public function getCurrentNode()
 	{

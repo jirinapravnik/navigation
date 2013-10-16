@@ -1,0 +1,11 @@
+<p class="breadcrumbs">
+	{block #menu}
+	<span n:foreach="$breadcrumbs as $breadcrumb" n:if="$breadcrumb->visibleInBreadcrumbs" n:class="item, $breadcrumb->isCurrent ? current" {if !($useHomepage && $breadcrumb->name === 'homepage') && !(!$useHomepage && $breadcrumb->parent->name === 'homepage')} itemprop="child"{/if} itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="{$breadcrumb->url}" itemprop="url"><span itemprop="title">{$breadcrumb->label}</span></a>
+		{if count($breadcrumb->components) > 0}
+		&raquo;
+		{include #menu, breadcrumbs => $breadcrumb->components}
+		{/if}
+	</span>
+	{/block}
+</p>

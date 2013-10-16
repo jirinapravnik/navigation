@@ -1,5 +1,9 @@
 <?php
 
+namespace JiriNapravnik\Navigation;
+
+use Nette\ComponentModel\Container;
+
 /**
  * Navigation node
  *
@@ -7,12 +11,7 @@
  * @author Jiří Nápravník (jiri.napravnik@gmail.com)
  * @license MIT
  */
-
-namespace Enbros\Navigation;
-
-use Nette\ComponentModel\Container;
-
-class NavigationNode extends Container
+class Node extends Container
 {
 
 	/**
@@ -34,36 +33,34 @@ class NavigationNode extends Container
 	 * @var bool 
 	 */
 	private $isCurrent = FALSE;
+	private $visibleInMenu = TRUE;
+	private $visibleInBreadcrumbs = TRUE;
 
-//	public $children = array();
-	
 	/**
 	 * Add navigation node as a child
 	 * @staticvar int $counter
 	 * @param string $label
 	 * @param string $url
 	 * @param string $title
-	 * @return NavigationNode
+	 * @return Node
 	 */
 	public function addNode($label, $url, $title = NULL)
 	{
-		$navigationNode = new self();
-		$navigationNode->setLabel($label);
-		$navigationNode->setUrl($url);
-		$navigationNode->setTitle($title);
+		$node = new self();
+		$node->setLabel($label);
+		$node->setUrl($url);
+		$node->setTitle($title);
 
 		static $counter;
-		$this->addComponent($navigationNode, ++$counter);
-		
-		//$this->children[] = $navigationNode;
+		$this->addComponent($node, ++$counter);
 
-		return $navigationNode;
+		return $node;
 	}
 
 	/**
 	 * Set node as current
 	 * @param bool $current
-	 * @return \Navigation\NavigationNode
+	 * @return Node
 	 */
 	public function setCurrent($current)
 	{
@@ -95,12 +92,22 @@ class NavigationNode extends Container
 	{
 		return $this->isCurrent;
 	}
-	
+
 	public function getChildren()
 	{
 		return $this->children;
 	}
-	
+
+	public function isVisibleInMenu()
+	{
+		return $this->visibleInMenu;
+	}
+
+	public function isVisibleInBreadcrumbs()
+	{
+		return $this->visibleInBreadcrumbs;
+	}
+
 	public function setLabel($label)
 	{
 		$this->label = $label;
@@ -122,6 +129,18 @@ class NavigationNode extends Container
 	public function setIsCurrent($isCurrent)
 	{
 		$this->isCurrent = $isCurrent;
+		return $this;
+	}
+
+	public function setVisibleInMenu($visibleInMenu)
+	{
+		$this->visibleInMenu = $visibleInMenu;
+		return $this;
+	}
+
+	public function setVisibleInBreadcrumbs($visibleInBreadcrumbs)
+	{
+		$this->visibleInBreadcrumbs = $visibleInBreadcrumbs;
 		return $this;
 	}
 
