@@ -3,7 +3,7 @@
     "description": "Control pro Nette Framework usnadňující tvorbu menu a drobečkové navigace",
     "keywords": ["nette", "navigation", "menu", "breadcrumbs"],
     "type": "library",
-    "homepage": "https://github.com/JiriNapravnik/navigation",
+    "homepage": "https://github.com/jirinapravnik/navigation",
     "license": "MIT",
     "authors": [
         {
@@ -20,7 +20,7 @@
     ],
     "support": {
         "email": "jiri.napravnik@gmail.com",
-        "forum": "https://github.com/JiriNapravnik/navigation/issues"
+        "forum": "https://github.com/jirinapravnik/navigation/issues"
     },
     "require": {
         "php": ">=5.3.0",
