@@ -3,8 +3,7 @@
 namespace JiriNapravnik;
 
 use JiriNapravnik\Navigation\Node;
-use Nette\Application\UI\Control;
-use Nette\Application\UI\InvalidLinkException;
+use Nette\Application\UI;
 use Nette\Utils\Strings;
 
 /**
@@ -14,7 +13,7 @@ use Nette\Utils\Strings;
  * @author Jiří Nápravník (jiri.napravnik@gmail.com)
  * @license MIT
  */
-class Navigation extends Control
+class Navigation extends UI\Control
 {
 
 	/**
@@ -31,6 +30,11 @@ class Navigation extends Control
 	 * @var bool 
 	 */
 	private $useHomepage = FALSE;
+	
+	/**
+	 * @var string
+	 */
+	private $ulClass = NULL;
 
 	/**
 	 * @var string 
@@ -41,7 +45,12 @@ class Navigation extends Control
 	 * @var string 
 	 */
 	private $breadcrumbsTemplate;
-
+	
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	
 	/**
 	 * Set node as current
 	 * @param Node $node
@@ -92,7 +101,7 @@ class Navigation extends Control
 	 */
 	public function setupHomepage($label, $url, $title = NULL)
 	{
-		$homepage = $this->getComponent('homepage');
+		$homepage = $this['homepage'];
 		$homepage->setLabel($label);
 		$homepage->setUrl($this->getCorrectUrl($url));
 		$homepage->setTitle($title);
@@ -104,7 +113,7 @@ class Navigation extends Control
 	{
 		try {
 			$link = $this->presenter->link($url);
-		} catch (InvalidLinkException $ex) {
+		} catch (UI\InvalidLinkException $ex) {
 			$link = FALSE;
 		}
 
@@ -134,8 +143,9 @@ class Navigation extends Control
 	{
 		$template = $this->createTemplate()
 			->setFile($this->menuTemplate ? : __DIR__ . '/templates/menu.phtml');
-		$template->homepage = $base ? $base : $this->getComponent('homepage');
+		$template->homepage = $base ? $base : $this['homepage'];
 		$template->useHomepage = $this->useHomepage && $renderHomepage;
+		$template->ulClass = $this->ulClass;
 		$template->renderChildren = $renderChildren;
 		$template->children = $this->getComponent('homepage')->getComponents();
 		$template->render();
@@ -225,6 +235,11 @@ class Navigation extends Control
 	{
 		$this->useHomepage = $useHomepage;
 		return $this;
+	}
+
+	public function setUlClass($ulClass)
+	{
+		$this->ulClass = $ulClass;
 	}
 
 }
