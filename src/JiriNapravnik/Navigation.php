@@ -89,7 +89,7 @@ class Navigation extends UI\Control
 	 */
 	public function addNode($label, $url, $title = NULL)
 	{
-		return $this->getComponent('homepage')->addNode($label, $this->getCorrectUrl($url), $title);
+		return $this->getComponent('homepage')->addNode($label, $url, $title);
 	}
 
 	/**
@@ -103,25 +103,10 @@ class Navigation extends UI\Control
 	{
 		$homepage = $this['homepage'];
 		$homepage->setLabel($label);
-		$homepage->setUrl($this->getCorrectUrl($url));
+		$homepage->setUrl($url);
 		$homepage->setTitle($title);
 		$this->useHomepage = TRUE;
 		return $homepage;
-	}
-
-	protected function getCorrectUrl($url)
-	{
-		try {
-			$link = $this->presenter->link($url);
-		} catch (UI\InvalidLinkException $ex) {
-			$link = FALSE;
-		}
-
-		if ($link === FALSE || Strings::startsWith($link, "error") === TRUE) {
-			return $url;
-		} else {
-			return $link;
-		}
 	}
 
 	/**
