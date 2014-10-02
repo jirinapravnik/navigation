@@ -1,0 +1,16 @@
+<ul>
+	<li n:if="$useHomepage" n:class="$homepage->active ? active">
+		<a href="{$homepage->url}" n:attr="title => $homepage->title">{$homepage->label}</a>
+	</li>
+
+	{block #menu}
+	<li n:foreach="$children as $item" n:class="$iterator->last ? last, $item->active ? active" n:if="$item->visibleInMenu">
+		<a href="{$item->url}" n:attr="title => $item->title">{$item->label}</a>
+		{if $renderChildren && count($item->getComponents()) > 0 && $item->active}
+		<ul>
+			{include #menu, children => $item->getComponents()}
+		</ul>
+		{/if}
+	</li>
+	{/block}
+</ul>

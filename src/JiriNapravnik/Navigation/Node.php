@@ -32,7 +32,7 @@ class Node extends Container
 	/**
 	 * @var bool 
 	 */
-	private $isCurrent = FALSE;
+	private $active = FALSE;
 	private $visibleInMenu = TRUE;
 	private $visibleInBreadcrumbs = TRUE;
 
@@ -64,7 +64,7 @@ class Node extends Container
 	 */
 	public function setCurrent($current)
 	{
-		$this->isCurrent = $current;
+		$this->current = $current;
 
 		if ($current) {
 			$this->lookup('Navigation\Navigation')->setCurrentNode($this);
@@ -87,10 +87,9 @@ class Node extends Container
 	{
 		return $this->title;
 	}
-
-	public function getIsCurrent()
-	{
-		return $this->isCurrent;
+	
+	public function isActive(){
+		return $this->active;
 	}
 
 	public function getChildren()
@@ -126,10 +125,8 @@ class Node extends Container
 		return $this;
 	}
 
-	public function setIsCurrent($isCurrent)
-	{
-		$this->isCurrent = $isCurrent;
-		return $this;
+	public function setActive($active){
+		$this->active = $active;
 	}
 
 	public function setVisibleInMenu($visibleInMenu)

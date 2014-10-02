@@ -1,0 +1,10 @@
+<p class="breadcrumbs">
+	{foreach $breadcrumbs as $breadcrumb}
+	<span n:class="item" {if $iterator->first} itemprop="child"{/if} itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="{$breadcrumb['url']}" title="{strlen($breadcrumb['title']) > 0 ? $breadcrumb['title'] : $breadcrumb['name']}" itemprop="url"><span itemprop="title">{$breadcrumb['name']}</span></a>
+		{if !$iterator->last}
+		&raquo;
+		{/if}
+	</span>
+	{/foreach}
+</p>

@@ -1,10 +1,9 @@
 <?php
 
-namespace JiriNapravnik;
+namespace JiriNapravnik\Menu;
 
 use JiriNapravnik\Navigation\Node;
 use Nette\Application\UI;
-use Nette\Utils\Strings;
 
 /**
  * Navigation
@@ -13,7 +12,7 @@ use Nette\Utils\Strings;
  * @author Jiří Nápravník (jiri.napravnik@gmail.com)
  * @license MIT
  */
-class Navigation extends UI\Control
+class Menu extends UI\Control
 {
 
 	/**
@@ -25,48 +24,34 @@ class Navigation extends UI\Control
 	 * @var Node 
 	 */
 	private $current;
-
-	/**
-	 * @var bool 
-	 */
 	private $useHomepage = FALSE;
-	
-	/**
-	 * @var string
-	 */
-	private $ulClass = NULL;
-
-	/**
-	 * @var string 
-	 */
+	private $renderChildren = FALSE;
 	private $menuTemplate;
 
-	/**
-	 * @var string 
-	 */
-	private $breadcrumbsTemplate;
-	
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->menuTemplate = __DIR__ . '/menu.latte';
 	}
-	
+
 	/**
 	 * Set node as current
 	 * @param Node $node
 	 */
 	public function setCurrentNode(Node $node)
 	{
-		if (isset($this->current)) {
-			$this->current->isCurrent = FALSE;
-		}
-		$node->isCurrent = TRUE;
 		$this->current = $node;
+
+		while ($node instanceof Node) {
+			$node->setActive(TRUE);
+			$node = $node->getParent();
+		}
 	}
 
 	public function setCurrentNodeByUrl($url, $node = NULL)
 	{
-		if (is_null($node)) {
+		if ($node === NULL) {
 			$node = $this->getComponent('homepage');
 		}
 
@@ -105,7 +90,6 @@ class Navigation extends UI\Control
 		$homepage->setLabel($label);
 		$homepage->setUrl($url);
 		$homepage->setTitle($title);
-		$this->useHomepage = TRUE;
 		return $homepage;
 	}
 
@@ -115,81 +99,44 @@ class Navigation extends UI\Control
 	 */
 	protected function createComponentHomepage($name)
 	{
-		new Node($this, $name);
+		return new Node($this, $name);
 	}
 
-	/**
-	 * Render menu
-	 * @param bool $renderChildren
-	 * @param Node $base
-	 * @param bool $renderHomepage
-	 */
-	public function renderMenu($renderChildren = TRUE, $base = NULL, $renderHomepage = TRUE)
-	{
-		$template = $this->createTemplate()
-			->setFile($this->menuTemplate ? : __DIR__ . '/templates/menu.phtml');
-		$template->homepage = $base ? $base : $this['homepage'];
-		$template->useHomepage = $this->useHomepage && $renderHomepage;
-		$template->ulClass = $this->ulClass;
-		$template->renderChildren = $renderChildren;
-		$template->children = $this->getComponent('homepage')->getComponents();
-		$template->render();
-	}
-
-	/**
-	 * Render full menu
-	 */
 	public function render()
 	{
-		$this->renderMenu();
+		$this->template->useHomepage = $this->useHomepage;
+		$this->template->renderChildren = $this->renderChildren;
+		$this->template->homepage = $this['homepage'];
+		$this->template->children = $this->getComponent('homepage')->getComponents();
+		$this->template->setFile($this->menuTemplate);
+		$this->template->render();
 	}
 
-	/**
-	 * Render main menu
-	 */
-	public function renderMainMenu()
-	{
-		$this->renderMenu(FALSE);
-	}
-
-	/**
-	 * Render breadcrumbs
-	 */
-	public function renderBreadcrumbs()
+	public function getItemsForBreadcrumbs()
 	{
 		if (empty($this->current)) {
-			return;
+			return [];
 		}
 
 		$node = $this->current;
-		$breadcrumbs = null;
+		$breadcrumbs = [];
 
 		while ($node instanceof Node) {
-			$parent = $node->getParent();
-			if (!$this->useHomepage && $parent === $this->getComponent('homepage')) {
-				$breadcrumbs = $node;
-				break;
-			}
+			$arr = [
+				'name' => $node->getLabel(),
+				'url' => $node->getUrl(),
+				'title' => $node->getTitle(),
+			];
+			array_unshift($breadcrumbs, $arr);
 
-			foreach ($parent->getComponents() as $component) {
-				if ($component != $node) {
-					$parent->removeComponent($component);
-				}
-			}
-
-			$node = $parent;
+			$node = $node->getParent();
 
 			if ($node === $this->getComponent('homepage')) {
-				$breadcrumbs = $node;
+				break;
 			}
 		}
-
-		$template = $this->createTemplate()
-			->setFile($this->breadcrumbsTemplate ? : __DIR__ . '/templates/breadcrumbs.phtml');
-
-		$template->useHomepage = $this->useHomepage;
-		$template->breadcrumbs = array($breadcrumbs);
-		$template->render();
+		
+		return $breadcrumbs;
 	}
 
 	/**
@@ -208,23 +155,15 @@ class Navigation extends UI\Control
 		$this->menuTemplate = $menuTemplate;
 	}
 
-	/**
-	 * @return Node
-	 */
-	public function getCurrentNode()
-	{
-		return $this->current;
-	}
-
 	public function setUseHomepage($useHomepage)
 	{
 		$this->useHomepage = $useHomepage;
 		return $this;
 	}
 
-	public function setUlClass($ulClass)
+	public function setRenderChildren($renderChildren)
 	{
-		$this->ulClass = $ulClass;
+		$this->renderChildren = $renderChildren;
 	}
 
 }
