@@ -64,6 +64,10 @@ class Menu extends UI\Control
 			$this->setCurrentNodeByUrl($url, $component);
 		}
 	}
+	
+	public function getCurrentNode(){
+		return $this->current;
+	}
 
 	/**
 	 * Add navigation node as a child
